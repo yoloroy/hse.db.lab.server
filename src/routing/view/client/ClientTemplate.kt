@@ -17,6 +17,7 @@ class ClientTemplate : MDTemplate() {
         globalScripts()
         clientSelfActions()
         observingTablesForSubscription()
+        myBookings()
         endingScripts()
     }
 
@@ -37,14 +38,16 @@ class ClientTemplate : MDTemplate() {
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.onreadystatechange = function () {
                         if ((xhr.readyState === 4) * (xhr.status === 200)) {
-                            location.reload();
+                            let item = document.createElement('h5');
+                            item.innerText = 'Стол#'+tableId+' от:'+startTime+' до:'+endTime;
+                            document.getElementById('my_bookings_container').appendChild(item);
                         } else {
                             console.log('vsyo pogano (deleteTable)');
                         }
                     };
                     var data = JSON.stringify({'client_id': clientId, 'table_id': tableId, 'start': startTime, 'end': endTime});
                     xhr.send(data);
-                }                
+                }
             """.trimIndent()
         }
     }
@@ -193,6 +196,16 @@ class ClientTemplate : MDTemplate() {
             };
         }
         """.trimIndent()
+        }
+    }
+
+    private fun BODY.myBookings() {
+        div("container mt-4 mb-2") {
+            h4("row") { +"Мои брони" }
+        }
+
+        div("container") {
+            id = "my_bookings_container"
         }
     }
 

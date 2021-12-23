@@ -2,15 +2,14 @@ package com.yoloroy
 
 import com.yoloroy.domain.booking.BookingRepository
 import com.yoloroy.domain.client.ClientRepository
-import com.yoloroy.domain.tables_status.TablesStatusRepository
 import com.yoloroy.domain.sql.dbEnd
 import com.yoloroy.domain.sql.dbStart
-import com.yoloroy.domain.sql.DatabaseFactory
 import com.yoloroy.domain.sql.repository.SQLBookingRepository
 import com.yoloroy.domain.sql.repository.SQLClientRepository
 import com.yoloroy.domain.sql.repository.SQLTableRepository
 import com.yoloroy.domain.sql.repository.SQLTablesStatusRepository
 import com.yoloroy.domain.table.TableRepository
+import com.yoloroy.domain.tables_status.TablesStatusRepository
 import com.yoloroy.model.BookingService
 import com.yoloroy.model.ClientService
 import com.yoloroy.model.TableService
