@@ -7,6 +7,6 @@
 Сущности бронирования стола, сам стол, клиент
 
 ## Схема:
-![](https://github.com/yoloroy/hse.db.lab.server/blob/master/resources/O3l5iPtAuM4.jpg)
+![](https://github.com/yoloroy/hse.db.lab.server/blob/master/resources/Снимок%20экрана%202021-12-23%20в%2010.00.28.png)
 
 ### Остальное словами на презентации
