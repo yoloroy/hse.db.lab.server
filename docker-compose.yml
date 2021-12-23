@@ -1,0 +1,19 @@
+version: '2'
+services:
+
+  # SQL database
+  postgres:
+    image: "postgres:9.6.0"
+    restart: "always"
+    volumes:
+      - "ktor-starter-data:/var/lib/postgresql/data"
+    ports:
+      - "54321:5432"
+    #environment:
+    #  POSTGRES_USER: "root"
+    #  POSTGRES_PASSWORD: ""
+    #  POSTGRES_DB: "restaurantdb"
+    mem_limit: "8g"
+
+volumes:
+  ktor-starter-data:
