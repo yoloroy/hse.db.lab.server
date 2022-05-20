@@ -17,22 +17,20 @@ import kotlinx.serialization.json.Json
 suspend fun DefaultWebSocketServerSession.observeTablesStatus(tablesStatusService: TablesStatusService) {
     val (start, end) = incoming.receive().receivePairOfDates()
 
-    var cancelSubscription: suspend () -> Unit = {} // TODO add or find better realisation of outer cancellation of flow
-    val cancellationFlow = flow { cancelSubscription = suspend { emit(Unit) } }
-    val statuses = tablesStatusService.subscribeOnInterval(start..end, cancellationFlow)
-
-    launch {
-        statuses
+    val statusesFlow = tablesStatusService.subscribeOnInterval(start..end)
+    val job = launch {
+        statusesFlow
             .filterIsInstance<ResultOf.Success<List<TableStatusModel>>>()
             .map { it.value }
             .map { list -> list.map { TableStatusDto(it) } }
+            .cancellable()
             .collect {
                 outgoing.send(Frame.Text(Json.encodeToString(it)))
             }
     }
 
     for (frame in incoming) when(frame) {
-        is Frame.Close -> cancelSubscription()
+        is Frame.Close -> job.cancel()
         else -> Unit
     }
 }
