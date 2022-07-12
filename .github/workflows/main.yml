@@ -27,10 +27,10 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.dockerhub_password }}
       run : docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" docker.io
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{secrets.docker_username}}/${{secrets.repo_name}}:${{steps.vars.outputs.tag}}
+      run: docker build . --file Dockerfile --tag yoloyojick/hse_db_lab_server:${{steps.vars.outputs.tag}}
     - name: Publish dockerimage to docker hub
-      run: docker push ${{secrets.docker_username}}/${{secrets.repo_name}}:${{steps.vars.outputs.tag}}
+      run: docker push yoloyojick/hse_db_lab_server:${{steps.vars.outputs.tag}}
     - name: Build Docker image with latest tag
-      run: docker build . --file Dockerfile --tag ${{secrets.docker_username}}/${{secrets.repo_name}}:latest
+      run: docker build . --file Dockerfile --tag yoloyojick/hse_db_lab_server:latest
     - name: Publish dockerimage to docker hub
-      run: docker push ${{secrets.docker_username}}/${{secrets.repo_name}}:latest
+      run: docker push yoloyojick/hse_db_lab_server:latest
