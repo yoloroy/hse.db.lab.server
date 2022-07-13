@@ -10,6 +10,7 @@ val exposedVersion: String by project
 plugins {
     application
     kotlin("jvm") version "1.4.21"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.4.21"
 }
 
