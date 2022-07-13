@@ -37,7 +37,7 @@ object DatabaseFactory {
     private fun hikariRel(): HikariDataSource {
         val config = HikariConfig().apply {
             driverClassName = "org.postgresql.Driver"
-            jdbcUrl = "jdbc:postgresql://localhost:5432/restaurant_rel"
+            jdbcUrl = dbUrl
             username = dbUser
             password = dbPassword
             isAutoCommit = true
