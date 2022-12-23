@@ -21,6 +21,19 @@ data class ClientAddingDto(
 )
 
 @Serializable
+data class ClientStartCheckingDto(
+    val name: String,
+    val phone: String
+)
+
+@Serializable
+data class ClientCheckingResultDto(
+    val name: String,
+    val phone: String,
+    val code: String
+)
+
+@Serializable
 data class ClientDiscountDto(
     val id: Int,
     val discount: Double

@@ -71,6 +71,7 @@ fun Application.module(
 
         // data
         post("client/add") { addClient(clientService) }
+        post("client/check") { checkClient(clientService) }
         post("client/upd/discount") { updateClientDiscount(clientService) }
         post("client/upd/ban") { updateClientBan(clientService) }
 

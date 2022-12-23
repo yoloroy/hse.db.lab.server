@@ -9,7 +9,17 @@ import kotlinx.html.*
 import kotlin.time.ExperimentalTime
 import kotlin.time.hours
 
+private const val authPhoneEnterDialogId = "authPhoneEnterDialogId"
+private const val authPhoneEnterDialogFieldId = "authPhoneEnterDialogFieldId"
+private const val authPhoneEnterDialogHeadId = "authPhoneEnterDialogHeadId"
+private const val enterPhoneDialogPhoneNumberId = "enterPhoneDialogPhoneNumberId"
+private const val authCheckPhoneDialogId = "authCheckPhoneDialogId"
+private const val authCheckPhoneDialogFieldId = "authCheckPhoneDialogFieldId"
+private const val authCheckPhoneDialogButtonId = "authCheckPhoneDialogButtonId"
+private const val checkPhoneDialogSmsTextId = "checkPhoneDialogSmsTextId"
+
 class ClientTemplate : MDTemplate() {
+
     @ExperimentalTime
     override fun BODY.apply() {
         classes += setOf("bg-light")
@@ -18,6 +28,8 @@ class ClientTemplate : MDTemplate() {
         clientSelfActions()
         observingTablesForSubscription()
         myBookings()
+        authPhoneEnterDialog()
+        authCheckPhoneDialog()
         endingScripts()
     }
 
@@ -74,10 +86,51 @@ class ClientTemplate : MDTemplate() {
                     }
                     button(type = ButtonType.button, classes = "btn btn-primary") {
                         id = "client_reg"
-                        onClick = "newUser();"
+                        onClick = "authEnterPhone();"
                         i("fas fa-user-plus")
                     }
                 }
+            }
+        }
+    }
+
+    private fun BODY.authPhoneEnterDialog() {
+        dialog("z-index:100") {
+            id = authPhoneEnterDialogId
+            h4 {
+                id = authPhoneEnterDialogHeadId
+                +"Вход"
+            }
+            input(classes = "form-control", type = InputType.tel) {
+                id = authPhoneEnterDialogFieldId
+                placeholder = "Номер телефона"
+            }
+            br()
+            button {
+                id = enterPhoneDialogPhoneNumberId
+                onClick = "authCheckPhone();"
+                +"Подтвердить"
+            }
+        }
+    }
+
+    private fun BODY.authCheckPhoneDialog() {
+        dialog("z-index:100") {
+            id = authCheckPhoneDialogId
+            h4 { +"Вход" }
+            p {
+                id = checkPhoneDialogSmsTextId
+                +"Смс:"
+            }
+            input(classes = "form-control", type = InputType.tel) { // TODO ?????
+                id = authCheckPhoneDialogFieldId
+                placeholder = "Код из Смс"
+            }
+            br()
+            button {
+                id = authCheckPhoneDialogButtonId
+                onClick = "newUser();"
+                +"Подтвердить"
             }
         }
     }
@@ -214,6 +267,8 @@ class ClientTemplate : MDTemplate() {
             +"""
                 var id = getCookieOrNull('id');
                 var name = getCookieOrNull('name');
+                /** @type {String} */
+                var code = null;
                 if (id !== null) {
                     document.getElementById('client_id').value = id;
                     document.getElementById('client_name').value = name;
@@ -226,7 +281,47 @@ class ClientTemplate : MDTemplate() {
                     document.getElementById('observe_tables').removeAttribute('disabled');
                     startTablesObserving();
                 }
+
+                function authEnterPhone() {
+                    const enterPhoneDialog = document.getElementById('$authPhoneEnterDialogId');
+                    enterPhoneDialog.showModal();
+                }
+
+                function authCheckPhone() {
+                    var xhr = new XMLHttpRequest();
+                    var url = '/client/check';
+                    xhr.open('POST', url, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onreadystatechange = function() {
+                        const enterPhoneDialog = document.getElementById('$authPhoneEnterDialogId');
+                        const checkPhoneDialog = document.getElementById('$authCheckPhoneDialogId');
+                        const enterPhoneDialogHead = document.getElementById('$authPhoneEnterDialogHeadId');
+                        const checkPhoneDialogSmsText = document.getElementById('$checkPhoneDialogSmsTextId');
+                        if ((xhr.readyState === 4) * (xhr.status === 200)) {
+                            /** @type {{phone: String, name: String, code: String}} */
+                            const smsData = JSON.parse(xhr.responseText);
+                            enterPhoneDialog.close();
+                            checkPhoneDialogSmsText.textContent = 'Sms, отправленное на номер ' + smsData.phone + ': \'' + smsData.name + ', ваш код для подтверждения входа: ' + smsData.code + '\'';
+                            code = smsData.code;
+                            checkPhoneDialog.show();
+                        } else {
+                            enterPhoneDialogHead.value = 'Вход, что-то пошло не так';
+                        }
+                    };
+                    
+                    var data = JSON.stringify({
+                        'name': document.getElementById('client_name').value,
+                        'phone': document.getElementById('$enterPhoneDialogPhoneNumberId').value
+                    });
+                    xhr.send(data);
+                }
+
                 function newUser() {
+                    if (document.getElementById('$authCheckPhoneDialogFieldId').value !== code) {
+                        const checkPhoneDialogSmsText = document.getElementById('$checkPhoneDialogSmsTextId');
+                        if (checkPhoneDialogSmsText.textContent.endsWith('Ошибка!')) checkPhoneDialogSmsText.textContent += '\nОшибка!';
+                        return;
+                    }
                     var xhr = new XMLHttpRequest();
                     var url = '/client/add';
                     xhr.open('POST', url, true);
