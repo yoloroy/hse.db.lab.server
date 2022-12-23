@@ -11,24 +11,24 @@ import com.yoloroy.lib.extensions.tryOrNull
 import kotlinx.datetime.Month
 
 class SQLTableRepository : TableRepository {
-    override fun add(minimumCheck: Double, humanCapacity: Int) =
-        tryOrNull { TableDao.add(minimumCheck, humanCapacity) }
-            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity) }
+    override fun add(imageUrl: String?, minimumCheck: Double, humanCapacity: Int) =
+        tryOrNull { TableDao.add(imageUrl, minimumCheck, humanCapacity) }
+            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity, it.imageUrl) }
             .let(::daoResult)
 
     override fun getAll() =
         tryOrNull { TableDao.getAll() }
-            ?.map { TableModel(it.id, it.minimumCheck, it.humanCapacity) }
+            ?.map { TableModel(it.id, it.minimumCheck, it.humanCapacity, it.imageUrl) }
             .let(::daoResult)
 
     override fun update(id: Int, minimumCheck: Double?, humanCapacity: Int?) =
         tryOrNull { TableDao.update(id, minimumCheck, humanCapacity) }
-            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity) }
+            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity, it.imageUrl) }
             .let(::daoResult)
 
     override fun delete(id: Int) =
         tryOrNull { TableDao.delete(id) }
-            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity) }
+            ?.let { TableModel(it.id, it.minimumCheck, it.humanCapacity, it.imageUrl) }
             .let(::daoResult)
 
     override fun getAllStats() =
@@ -48,7 +48,8 @@ class SQLTableRepository : TableRepository {
                 .associate { Month(it.month) to it.usage },
             third
                 .filter { it.tableId == table.id }
-                .associate { it.hour to it.averageUsage }
+                .associate { it.hour to it.averageUsage },
+            table.imageUrl
         )
     }
 }

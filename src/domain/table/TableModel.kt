@@ -5,7 +5,8 @@ import kotlinx.datetime.Month
 data class TableModel(
     val id: Int,
     val minimumCheck: Double,
-    val humanCapacity: Int
+    val humanCapacity: Int,
+    val imageUrl: String?
 )
 
 data class TableStatsModel(
@@ -13,5 +14,6 @@ data class TableStatsModel(
     val minimumCheck: Double,
     val humanCapacity: Int,
     val monthlyUsage: Map<Month, Int>,
-    val hoursUsage: Map<Int, Double>
+    val hoursUsage: Map<Int, Double>,
+    val imageUrl: String?
 )

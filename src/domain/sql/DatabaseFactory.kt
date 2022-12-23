@@ -25,7 +25,7 @@ object DatabaseFactory {
     private fun hikariDev(): HikariDataSource {
         val config = HikariConfig().apply {
             driverClassName = "org.postgresql.Driver"
-            jdbcUrl = dbUrl
+            jdbcUrl = dbUrl.replace("rel", "template")
             username = dbUser
             password = dbPassword
             isAutoCommit = true

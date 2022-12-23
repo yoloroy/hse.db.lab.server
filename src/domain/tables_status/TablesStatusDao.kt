@@ -22,5 +22,9 @@ object TablesStatusDao {
     }
 }
 
-private fun ResultSet.getTableStatus() =
-    TableStatusRow(getInt(1), getBoolean(2), getInt(3))
+private fun ResultSet.getTableStatus() = TableStatusRow(
+    getInt(1),
+    getBoolean(2),
+    getInt(3),
+    getString(4)
+)

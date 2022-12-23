@@ -9,7 +9,7 @@ import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.addTable(tableService: TableService) =
     resultMethod<TableAddingDto> {
-        tableService.add(it.minimumCheck, it.clientCapacity) transformTo ::TableDto
+        tableService.add(it.imageUrl, it.minimumCheck, it.clientCapacity) transformTo ::TableDto
     }
 
 suspend fun PipelineContext<Unit, ApplicationCall>.deleteTable(tableService: TableService) =

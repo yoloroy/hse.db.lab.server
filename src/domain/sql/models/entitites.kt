@@ -14,6 +14,7 @@ data class TableRow(
     val id: Int,
     val minimumCheck: Double,
     val humanCapacity: Int,
+    val imageUrl: String?
 )
 
 data class BookingRow(
@@ -28,6 +29,7 @@ data class TableStatusRow(
     val tableId: Int,
     val isBooked: Boolean,
     val bookingId: Int?,
+    val imageUrl: String?
 )
 
 data class TableHoursUsageRow(

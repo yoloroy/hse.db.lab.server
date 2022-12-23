@@ -32,8 +32,8 @@ import java.time.Duration
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @ExperimentalCoroutinesApi
-@Suppress("unused", "UNUSED_PARAMETER") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
+@Suppress("unused")
+@JvmOverloads
 fun Application.module(
     testing: Boolean = false,
     clientRepository: ClientRepository = SQLClientRepository(),
@@ -80,6 +80,8 @@ fun Application.module(
 
         post("table/add") { addTable(tableService) }
         post("table/delete") { deleteTable(tableService) }
+
+        post("file/image") { uploadImage() }
 
         webSocket ("tables/status/observe") { observeTablesStatus(tablesStatusService) }
 

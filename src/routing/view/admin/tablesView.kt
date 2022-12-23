@@ -20,7 +20,10 @@ private object TemplateRowIds {
     const val clientCapacity = "table_row_client_capacity"
     const val hoursStats = "table_row_hours_stats"
     const val monthsStats = "table_row_months_stats"
+    const val imageView = "table_row_iveage_view"
 
+    const val formImageUploadId = "form_image_upload"
+    const val formImageViewId = "form_image_view"
     const val formMinimumCheckId = "form_minimum_check"
     const val formClientCapacityId = "form_client_capacity"
 }
@@ -48,6 +51,7 @@ private fun FlowContent.tablesTable(tables: List<TableStatsModel>) {
         thead {
             tr {
                 th(ThScope.col) { +"#" }
+                th(ThScope.col) { +"Table Image" }
                 th(ThScope.col) { +"Minimum Check" }
                 th(ThScope.col) { +"Client Capacity" }
                 th(ThScope.col) { +"Hours Stats" }
@@ -65,6 +69,7 @@ private fun FlowContent.tablesTable(tables: List<TableStatsModel>) {
                 th(ThScope.row) {
                     a {
                         onClick = "addTable(" +
+                                "document.getElementById('${TemplateRowIds.formImageViewId}').src," +
                                 "document.getElementById('${TemplateRowIds.formMinimumCheckId}').value," +
                                 "document.getElementById('${TemplateRowIds.formClientCapacityId}').value" +
                                 ");"
@@ -73,6 +78,44 @@ private fun FlowContent.tablesTable(tables: List<TableStatsModel>) {
                         i("fas fa-plus-circle") {
                             attributes["data-mdb-ripple-color"] = "dark"
                         }
+                    }
+                }
+                td {
+                    form {
+                        id = TemplateRowIds.formImageUploadId
+                        fileInput(name = "photo") {
+                            accept = "image/*"
+                        }
+                        submitInput()
+                    }
+                    img {
+                        id = TemplateRowIds.formImageViewId
+                        width = "48"
+                        height = "48"
+                        hidden = true
+                    }
+                    script {
+                        // language=JavaScript
+                        +"""
+                        var formImageUpload = document.getElementById('${TemplateRowIds.formImageUploadId}');
+                        var formImageView = document.getElementById('${TemplateRowIds.formImageViewId}');
+                        formImageUpload.onsubmit = function() {
+                            var formData = new FormData(formImageUpload);
+                            formData.append('file', formImageUpload.children[0].value);
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', '/file/image', true);
+                            xhr.send(formData);
+                            xhr.onreadystatechange = function () {
+                                if (((xhr.readyState === 4) * (xhr.status === 200)) !== 1) return;
+                                const imagePath = xhr.responseText;
+                                formImageUpload.hidden = true;
+                                formImageView.hidden = false;
+                                formImageView.src = imagePath;
+                            }
+                            // To avoid actual submission of the form
+                            return false;
+                        }
+                        """.trimIndent()
                     }
                 }
                 td {
@@ -95,6 +138,14 @@ private fun TBODY.tableRow(table: TableStatsModel) {
         th(ThScope.row) {
             id = TemplateRowIds.id
             +"${table.id}"
+        }
+        td {
+            id = TemplateRowIds.imageView
+            img {
+                table.imageUrl?.let { src = it }
+                width = "48"
+                height = "48"
+            }
         }
         td {
             id = TemplateRowIds.minimumCheck
@@ -148,11 +199,13 @@ private fun FlowContent.tablesScript() = script {
 }
 
 private fun FlowContent.tableActions() = script {
+    val hoursLabels = (1..24).joinToString("', '", "'", "'")
+    val monthsLabels = (1..12).map { Month.of(it) }.joinToString("', '", "'", "'")
     //language=js
     @Suppress("DEPRECATION")
     +"""
         function hoursPopup(values) {
-            let labels = [${(1..24).joinToString("', '", "'", "'")}];
+            let labels = [$hoursLabels];
             let data = {
                 labels: labels,
                 datasets: [{
@@ -175,7 +228,7 @@ private fun FlowContent.tableActions() = script {
         }
 
         function monthsPopup(values) {
-            let labels = [${(1..12).map{ Month.of(it) }.joinToString("', '", "'", "'")}];
+            let labels = [$monthsLabels];
             let data = {
                 labels: labels,
                 datasets: [{
@@ -233,7 +286,7 @@ private fun FlowContent.tableActions() = script {
             xhr.send(data);
         }
 
-        function addTable(minimumCheck, clientCapacity) {
+        function addTable(imageUrl, minimumCheck, clientCapacity) {
             var xhr = new XMLHttpRequest();
             var url = '/table/add';
             xhr.open('POST', url, true);
@@ -245,7 +298,7 @@ private fun FlowContent.tableActions() = script {
                     console.log('vsyo pogano (deleteTable)');
                 }
             };
-            var data = JSON.stringify({'minimum_check': minimumCheck, 'client_capacity': clientCapacity});
+            var data = JSON.stringify({'image_url': imageUrl, 'minimum_check': minimumCheck, 'client_capacity': clientCapacity});
             xhr.send(data);
         }
     """.trimIndent()

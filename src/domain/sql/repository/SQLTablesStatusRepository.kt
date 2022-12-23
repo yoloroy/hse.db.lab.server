@@ -9,6 +9,6 @@ import kotlinx.datetime.LocalDateTime
 class SQLTablesStatusRepository : TablesStatusRepository {
     override fun getAllForInterval(interval: ClosedRange<LocalDateTime>) =
         tryOrNull { TablesStatusDao.getAllForInterval(interval.start, interval.endInclusive) }
-            ?.map { TableStatusModel(it.tableId, it.bookingId, it.isBooked) }
+            ?.map { TableStatusModel(it.tableId, it.bookingId, it.isBooked, it.imageUrl) }
             .let(::daoResult)
 }

@@ -3,7 +3,7 @@ package com.yoloroy.domain.table
 import com.yoloroy.lib.util.ResultOf
 
 interface TableRepository {
-    fun add(minimumCheck: Double, humanCapacity: Int): ResultOf<TableModel>
+    fun add(imageUrl: String?, minimumCheck: Double, humanCapacity: Int): ResultOf<TableModel>
 
     fun getAll(): ResultOf<List<TableModel>>
 

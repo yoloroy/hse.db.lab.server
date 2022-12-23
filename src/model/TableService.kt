@@ -3,8 +3,8 @@ package com.yoloroy.model
 import com.yoloroy.domain.table.TableRepository
 
 class TableService(private val tableRepository: TableRepository) {
-    fun add(minimumCheck: Double, humanCapacity: Int) =
-        tableRepository.add(minimumCheck, humanCapacity)
+    fun add(imageUrl: String?, minimumCheck: Double, humanCapacity: Int) =
+        tableRepository.add(imageUrl, minimumCheck, humanCapacity)
 
     fun getAll() = tableRepository.getAll()
 

@@ -7,8 +7,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.ResultSet
 
 object TableDao {
-    fun add(minimumCheck: Double, capacity: Int) = transaction {
-        exec("select * from table_add($minimumCheck, $capacity)") {
+    fun add(imageUrl: String?, minimumCheck: Double, capacity: Int) = transaction {
+        exec("select * from table_add($minimumCheck, $capacity, '$imageUrl')") {
             it.next()
             it.getTable()
         }
@@ -82,5 +82,6 @@ private fun ResultSet.getTableMonthsUsage() = TableMonthsUsageRow(
 private fun ResultSet.getTable() = TableRow(
     getInt("id"),
     getDouble("minimum_check"),
-    getInt("human_capacity")
+    getInt("human_capacity"),
+    getString("image_url")
 )

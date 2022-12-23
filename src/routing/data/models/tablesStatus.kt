@@ -8,7 +8,8 @@ import com.yoloroy.domain.tables_status.TableStatusModel as TableStatusModel1
 data class TableStatusDto(
     @SerialName("table_id") val tableId: Int,
     @SerialName("booking_id") val bookingId: Int?,
-    @SerialName("is_booked") val isBooked: Boolean
+    @SerialName("is_booked") val isBooked: Boolean,
+    @SerialName("image_url") val imageUrl: String?
 ) {
-    constructor(model: TableStatusModel1) : this(model.tableId, model.bookingId, model.isBooked)
+    constructor(model: TableStatusModel1) : this(model.tableId, model.bookingId, model.isBooked, model.imageUrl)
 }

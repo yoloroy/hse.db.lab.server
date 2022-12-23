@@ -183,7 +183,13 @@ class ClientTemplate : MDTemplate() {
             div("card my-2") {
                 h5("card-header")
                 div("card-body") {
-                    p("card-text")
+                    p("card-text") {
+                        img(classes = "table_img") {
+                            width = "100%"
+                            hidden = true
+                        }
+                        div(classes = "table_text")
+                    }
                     button(type = ButtonType.button, classes = "btn btn-outline-primary btn_add_booking") {
                         id = "btn_add_booking"
                         onClick = ";"
@@ -229,7 +235,13 @@ class ClientTemplate : MDTemplate() {
             
                         item.getElementsByClassName('card-header')[0]
                             .innerHTML = 'Стол #' + status.table_id;
-                        item.getElementsByClassName('card-text')[0]
+                        if (status.image_url) {
+                            item.getElementsByClassName('table_img')[0]
+                                .src = status.image_url;
+                            item.getElementsByClassName('table_img')[0]
+                                .hidden = false;
+                        }
+                        item.getElementsByClassName('table_text')[0]
                             .innerHTML = status.is_booked ? ('Занят #' + status.booking_id) : 'Свободен';
                         item.getElementsByClassName('btn_add_booking')[0].addEventListener('click', function() {
                             add_booking(document.getElementById('client_id').value,status.table_id,startTimeForm.value,endTimeForm.value);
@@ -322,6 +334,8 @@ class ClientTemplate : MDTemplate() {
                         if (checkPhoneDialogSmsText.textContent.endsWith('Ошибка!')) checkPhoneDialogSmsText.textContent += '\nОшибка!';
                         return;
                     }
+                    const checkPhoneDialog = document.getElementById('$authCheckPhoneDialogId');
+                    checkPhoneDialog.hidden = true;
                     var xhr = new XMLHttpRequest();
                     var url = '/client/add';
                     xhr.open('POST', url, true);
