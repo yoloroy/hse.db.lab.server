@@ -66,6 +66,11 @@ class ClientTemplate : MDTemplate() {
 
     private fun BODY.clientSelfActions() {
         div("container mt-4 mb-2 p-2") {
+            a("/menu.jpg") {
+                h3 { +"Меню" }
+            }
+        }
+        div("container mt-4 mb-2 p-2") {
             id = "client_self_actions"
             h4("row") { +"Аккаунт" }
             div("row") {
