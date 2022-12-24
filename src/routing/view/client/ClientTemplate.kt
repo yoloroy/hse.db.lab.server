@@ -20,6 +20,10 @@ private const val checkPhoneDialogSmsTextId = "checkPhoneDialogSmsTextId"
 
 class ClientTemplate : MDTemplate() {
 
+    override fun HEAD.apply() {
+        script(src = "https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js") {}
+    }
+
     @ExperimentalTime
     override fun BODY.apply() {
         classes += setOf("bg-light")
@@ -202,6 +206,9 @@ class ClientTemplate : MDTemplate() {
                         disabled = true
                         +"Забронировать"
                     }
+                    div(classes = "table_qrcode") {
+                        hidden = true
+                    }
                 }
             }
         }
@@ -250,6 +257,18 @@ class ClientTemplate : MDTemplate() {
                             .innerHTML = status.is_booked ? ('Занят #' + status.booking_id) : 'Свободен';
                         item.getElementsByClassName('btn_add_booking')[0].addEventListener('click', function() {
                             add_booking(document.getElementById('client_id').value,status.table_id,startTimeForm.value,endTimeForm.value);
+                            item.getElementsByClassName('btn_add_booking')[0].hidden = true;
+                            item.getElementsByClassName('table_qrcode')[0].hidden = false;
+                            if (status.image_url) {
+                                new QRCode(item.getElementsByClassName('table_qrcode')[0], {
+                                	text: status.image_url.replace('0.0.0.0:8080', '172.20.10.2:8080'),
+                                	width: 128,
+                                	height: 128,
+                                	colorDark : '#5868bf',
+                                	colorLight : '#ffffff',
+                                	correctLevel : QRCode.CorrectLevel.H
+                                });
+                            }
                         });
                         if (status.is_booked) {
                             item.getElementsByClassName('btn_add_booking')[0].hidden = 'true';
